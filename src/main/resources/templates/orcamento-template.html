@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Orçamento</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            color: #2b2b2b;
+        }
+        .cabecalho {
+            border-bottom: 3px solid #000000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .cabecalho h1 {
+            color: #000000;
+            font-size: 24px;
+            margin: 0 0 5px 0;
+        }
+
+       .cabecalho img {
+        width: 150px;
+        height: auto;
+        }
+        
+        .dados-cliente {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .dados-cliente td {
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        .dados-cliente .rotulo {
+            font-weight: bold;
+            width: 140px;
+            color: #444444;
+        }
+        table.produtos {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table.produtos th {
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+        }
+        table.produtos td {
+            padding: 8px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 11px;
+        }
+        table.produtos tr:nth-child(even) {
+            background-color: #f5f7fb;
+        }
+        .coluna-numero {
+            text-align: center;
+        }
+        .total {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .total td {
+            padding: 6px 8px;
+        }
+        .total .rotulo-total {
+            text-align: right;
+            font-size: 13px;
+            font-weight: bold;
+            color: #444444;
+        }
+        .total .valor-total {
+            text-align: right;
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+            width: 140px;
+        }
+        .rodape {
+            margin-top: 40px;
+            padding-top: 10px;
+            border-top: 1px solid #dddddd;
+            font-size: 10px;
+            color: #999999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cabecalho">
+        <img th:src="${'data:image/png;base64,' + logoBase64}" alt="" />
+        <h1>Orçamento</h1>
+    </div>
+
+    <table class="dados-cliente" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="rotulo">Cliente:</td>
+            <td th:text="${orcamento.nomeCliente}">Nome do Cliente</td>
+        </tr>
+        <tr>
+            <td class="rotulo">CPF/CNPJ:</td>
+            <td th:text="${orcamento.cpfCnpj}">000.000.000-00</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Número do orçamento:</td>
+            <td th:text="${orcamento.id}">id-orcamento</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Data de emissão:</td>
+            <td th:text="${#temporals.format(orcamento.dataCriacao, 'dd/MM/yyyy')}">01/01/2026</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Válido até:</td>
+            <td th:text="${#temporals.format(orcamento.dataValidade, 'dd/MM/yyyy')}">01/02/2026</td>
+        </tr>
+    </table>
+
+    <table class="produtos" cellpadding="0" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Descrição</th>
+                <th class="coluna-numero">Qtd.</th>
+                <th class="coluna-numero">Valor Unitário</th>
+                <th class="coluna-numero">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="produto : ${orcamento.produtos}">
+                <td th:text="${produto.nome}">Produto</td>
+                <td th:text="${produto.descricao}">Descrição</td>
+                <td class="coluna-numero" th:text="${produto.quantidade}">1</td>
+                <td class="coluna-numero"
+                    th:text="${'R$ ' + #numbers.formatDecimal(produto.valorUnitario, 1, 'POINT', 2, 'COMMA')}">
+                    R$ 0,00
+                </td>
+                <td class="coluna-numero"
+                    th:text="${'R$ ' + #numbers.formatDecimal(produto.subtotal, 1, 'POINT', 2, 'COMMA')}">
+                    R$ 0,00
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="total" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="rotulo-total">Valor Total:</td>
+            <td class="valor-total"
+                th:text="${'R$ ' + #numbers.formatDecimal(orcamento.valorTotal, 1, 'POINT', 2, 'COMMA')}">
+                R$ 0,00
+            </td>
+        </tr>
+    </table>
+
+    <div class="rodape">
+        <p>Este orçamento não constitui garantia de preço após a data de validade indicada acima.</p>
+    </div>
+
+</body>
+</html>
